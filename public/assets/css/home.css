@@ -149,3 +149,12 @@
     width: 100%;
     margin: 2em;
 }
+
+.table tbody tr td.image-prod .img {
+    height: 150px
+}
+
+.my-cart .form-control:focus {
+    border-color: #82ae46;
+    outline: 0;
+}

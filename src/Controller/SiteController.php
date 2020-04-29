@@ -8,10 +8,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Genre;
 use App\Entity\Livre;
 use App\Entity\Auteur;
+use App\Entity\Livraison;
+use App\Entity\Pays;
 use App\Repository\GenreRepository;
 use App\Repository\LivreRepository;
 use App\Repository\AuteurRepository;
 use App\Repository\AvisRepository;
+use App\Repository\LivraisonRepository;
+use App\Repository\PaysRepository;
 
 class SiteController extends AbstractController
 {
@@ -139,5 +143,17 @@ class SiteController extends AbstractController
         {
             $livre->moyNote = 0;
         }
+    }
+
+    /**
+     * @Route("/livraison/{id}", name="livraison")
+     */
+    public function livraison(Livraison $livraison, PaysRepository $pays_repo)
+    {
+        $pays = $pays_repo->findAll();
+        return $this->render('site/livraison.html.twig', [
+            'livraison' => $livraison,
+            'pays' => $pays
+        ]);
     }
 }

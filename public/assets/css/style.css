@@ -8882,9 +8882,8 @@ h1, h2, h3, h4, h5,
 .ftco-cart button, .ftco-cart .form-control {
   height: 54px !important;
   text-align: center;
-  bordeR: 1px solid rgba(0, 0, 0, 0.05) !important;
+  bordeR: 1px solid rgba(0, 0, 0, 0.05);
   color: #000000 !important;
-  padding: 0;
   font-size: 14px; }
 
 .ftco-cart .form-group {
@@ -8907,11 +8906,6 @@ h1, h2, h3, h4, h5,
         right: 10px; } }
   .ftco-cart .form-group .select-wrap {
     position: relative; }
-    .ftco-cart .form-group .select-wrap select {
-      font-size: 14px;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none; }
 
 .ftco-cart .info label {
   font-size: 13px;

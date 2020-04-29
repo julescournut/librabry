@@ -64,10 +64,27 @@ class Livre
      */
     private $volume;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Achat", mappedBy="livre")
+     */
+    private $achats;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\DetailLivraison", mappedBy="livre")
+     */
+    private $detailLivraisons;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $stock;
+
     public function __construct()
     {
         $this->genres = new ArrayCollection();
         $this->avis = new ArrayCollection();
+        $this->achats = new ArrayCollection();
+        $this->detailLivraisons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -212,6 +229,80 @@ class Livre
     public function setVolume(?int $volume): self
     {
         $this->volume = $volume;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Achat[]
+     */
+    public function getAchats(): Collection
+    {
+        return $this->achats;
+    }
+
+    public function addAchat(Achat $achat): self
+    {
+        if (!$this->achats->contains($achat)) {
+            $this->achats[] = $achat;
+            $achat->setLivre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAchat(Achat $achat): self
+    {
+        if ($this->achats->contains($achat)) {
+            $this->achats->removeElement($achat);
+            // set the owning side to null (unless already changed)
+            if ($achat->getLivre() === $this) {
+                $achat->setLivre(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DetailLivraison[]
+     */
+    public function getDetailLivraisons(): Collection
+    {
+        return $this->detailLivraisons;
+    }
+
+    public function addDetailLivraison(DetailLivraison $detailLivraison): self
+    {
+        if (!$this->detailLivraisons->contains($detailLivraison)) {
+            $this->detailLivraisons[] = $detailLivraison;
+            $detailLivraison->setLivre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetailLivraison(DetailLivraison $detailLivraison): self
+    {
+        if ($this->detailLivraisons->contains($detailLivraison)) {
+            $this->detailLivraisons->removeElement($detailLivraison);
+            // set the owning side to null (unless already changed)
+            if ($detailLivraison->getLivre() === $this) {
+                $detailLivraison->setLivre(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getStock(): ?int
+    {
+        return $this->stock;
+    }
+
+    public function setStock(int $stock): self
+    {
+        $this->stock = $stock;
 
         return $this;
     }

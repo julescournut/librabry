@@ -17,11 +17,6 @@ class Avis
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $nomUtilisateur;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $dateAjout;
@@ -42,21 +37,15 @@ class Avis
      */
     private $livre;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateur", inversedBy="avis")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $utilisateur;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getNomUtilisateur(): ?string
-    {
-        return $this->nomUtilisateur;
-    }
-
-    public function setNomUtilisateur(string $nomUtilisateur): self
-    {
-        $this->nomUtilisateur = $nomUtilisateur;
-
-        return $this;
     }
 
     public function getDateAjout(): ?\DateTimeInterface
@@ -103,6 +92,18 @@ class Avis
     public function setLivre(?Livre $livre): self
     {
         $this->livre = $livre;
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

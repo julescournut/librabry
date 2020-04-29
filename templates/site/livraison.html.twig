@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - Tous les livres{% endblock %}
+
+{% block body %}
+<section class="ftco-section ftco-cart my-cart">
+    <div class="container">
+        <div class="row">
+        <div class="col-md-12 ftco-animate">
+            <div class="cart-list">
+                <table class="table">
+                    <thead class="thead-primary">
+                      <tr class="text-center">
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        <th>Livre</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {%for detail in livraison.detailLivraisons %}
+                          <tr class="text-center">
+                            <td class="product-remove"><a href="#"><span class="ion-ios-close"></span></a></td>
+
+                            <td class="image-prod"><div class="img" style="background-image:url({{ detail.livre.image }});"></div></td>
+
+                            <td class="product-name">
+                                <h3>{{ detail.livre.titre }}</h3>
+                                {% set text = detail.livre.resume |split(' ') %}
+                                <p>
+                                    {% if text|length > 20 %}
+                                        {% for t in text|slice(0, 20) %}
+                                            {{ t }}
+                                        {% endfor %}
+                                        ...
+                                    {% else %}
+                                        {{ text|join(' ') }}
+                                    {% endif %}
+                                </p>
+                            </td>
+
+                            <td class="price">{{ detail.livre.prix }}€</td>
+
+                            <td class="quantity">
+                                <div class="input-group mb-3">
+                                <input type="number" name="quantity" class="quantity form-control input-number" value="{{ detail.quantite }}" min="1" max="100">
+                            </div>
+                          </td>
+
+                            <td class="total">{{ detail.quantite * detail.livre.prix }}€</td>
+                          </tr><!-- END TR-->
+                      {% endfor %}
+                    </tbody>
+                  </table>
+              </div>
+        </div>
+    </div>
+    <div class="row justify-content-end">
+        <div class="col-lg-8 mt-5 cart-wrap ftco-animate">
+            <div class="cart-total mb-3">
+                <h3>Adresse de livraison</h3>
+                <p>Modifiez votre adresse de livraison si différentes de votre adresse.</p>
+                <form action="#" class="bg-light p-5">
+                  <div class="form-group">
+                    <label for="country">Adresse</label>
+                    <input type="text" class="form-control text-left px-3" value="{{ livraison.utilisateur.adresse.rue }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="country">Code Postal</label>
+                    <input type="text" class="form-control text-left px-3" value="{{ livraison.utilisateur.adresse.codePostal }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="country">Ville</label>
+                    <input type="text" class="form-control text-left px-3" value="{{ livraison.utilisateur.adresse.ville }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="pays">Pays</label>
+                    <div class="select-wrap">
+                        <select class="form-control" name="pays" id="pays">
+                            {% for p in pays %}
+                              <option {% if livraison.utilisateur.adresse.pays.id == p.id %} selected {%endif%} value="{{ p.id }}">{{ p.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                  </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
+            <div class="cart-total mb-3">
+                <h3>Panier</h3>
+                {% set total = 0 %}
+                {%for detail in livraison.detailLivraisons %}
+                    <p class="d-flex">
+                        <span>{{ detail.livre.titre }} x {{detail.quantite }}</span>
+                        {% set total = total + detail.livre.prix * detail.quantite %}
+                        <span>{{ detail.livre.prix * detail.quantite }}€</span>
+                    </p>
+                {% endfor %}
+                <p class="d-flex">
+                    <span>Livraison</span>
+                    <span>0.00€</span>
+                </p>
+                <hr>
+                <p class="d-flex total-price">
+                    <span>Total</span>
+                    <span>{{ total }}€</span>
+                </p>
+            </div>
+            <p><a href="checkout.html" class="btn btn-primary py-3 px-4">Acheter</a></p>
+        </div>
+    </div>
+    </div>
+</section>
+{% endblock %}
