@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section id="home-section" class="hero">
+  <div class="home-slider owl-carousel">
+    <div class="slider-item" style="background-image: url(https://images.radio-canada.ca/q_auto,w_1250/v1/ici-info/16x9/livres-bibliotheque-salon-livre-montreal-2019.jpg);">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row slider-text justify-content-center align-items-center" data-scrollax-parent="true">
+
+          <div class="col-sm-12 ftco-animate text-center">
+            <h1 class="mb-2">100% local &amp; équitable</h1>
+            <h2 class="subheading mb-4">Une véritable librairie de quartier mais avec les services des grandes enseignes qui tient dans votre smartphone.</h2>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  <div class="slider-item" style="background-image: url(https://www.wpnormandie.fr/wp-content/uploads/2017/11/ecommerce-une.jpg);">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row slider-text justify-content-center align-items-center" data-scrollax-parent="true">
+
+        <div class="col-md-12 ftco-animate text-center">
+          <h1 class="mb-2">Vos livres &amp; BD, rapidement.</h1>
+          <h2 class="subheading mb-4">Livraison gratuite en 48h. 14 jours pour changer d'avis.</h2>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        <div class="row no-gutters ftco-services">
+  <div class="col-md-4 text-center d-flex align-self-stretch ftco-animate">
+    <div class="media block-6 services mb-md-0 mb-4">
+      <div class="icon bg-color-1 active d-flex justify-content-center align-items-center mb-2">
+            <span class="flaticon-shipped"></span>
+      </div>
+      <div class="media-body">
+        <h3 class="heading">Livraison gratuite</h3>
+        <span>En France métropolitaine</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 text-center d-flex align-self-stretch ftco-animate">
+    <div class="media block-6 services mb-md-0 mb-4">
+      <div class="icon bg-color-3 d-flex justify-content-center align-items-center mb-2">
+            <span class="flaticon-award"></span>
+      </div>
+      <div class="media-body">
+        <h3 class="heading">Qualité supérieure</h3>
+        <span>Livre de qualité</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 text-center d-flex align-self-stretch ftco-animate">
+    <div class="media block-6 services mb-md-0 mb-4">
+      <div class="icon bg-color-4 d-flex justify-content-center align-items-center mb-2">
+            <span class="flaticon-customer-service"></span>
+      </div>
+      <div class="media-body">
+        <h3 class="heading">Support</h3>
+        <span>Support 24/7</span>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+</section>
+
+<section class="ftco-section" id="tendances">
+<div class="container">
+        <div class="row justify-content-center mb-3 pb-3">
+  <div class="col-md-12 heading-section text-center ftco-animate">
+    <span class="subheading">Livres à la une</span>
+    <h2 class="mb-4">Nos livres tendances</h2>
+    <p>Tous les livres du moments, sélectionnés par nos soins.</p>
+  </div>
+</div>
+</div>
+<div class="container">
+    <div class="row">
+        {% for livre in livres %}
+        <div class="col-md-6 col-lg-3 ftco-animate tendancy-product">
+            <div class="product">
+                <a href="{{ path('livre',  {'id' : livre.id }) }}" class="img-prod"><img class="img-fluid" src="{{ livre.image }}" alt="Colorlib Template">
+                    <div class="overlay"></div>
+                </a>
+                <div class="text py-3 pb-4 px-3 text-center">
+                    <h3 class="book-title"><a href="{{ path('livre',  {'id' : livre.id }) }}">{{ livre.titre }}</a></h3>
+                    <div class="d-flex">
+                        <div class="pricing">
+                            <p class="price"><span class="price-sale">{{ livre.prix }}€</span></p>
+                        </div>
+                    </div>
+                    <div class="bottom-area d-flex px-3">
+                        <div class="m-auto d-flex">
+                            <ul class="rating">
+                                <li class="fa fa-star {% if livre.moyNote < 1 %} disable {% endif %}"></li>
+                                <li class="fa fa-star {% if livre.moyNote < 2 %} disable {% endif %}"></li>
+                                <li class="fa fa-star {% if livre.moyNote < 3 %} disable {% endif %}"></li>
+                                <li class="fa fa-star {% if livre.moyNote < 4 %} disable {% endif %}"></li>
+                                <li class="fa fa-star {% if livre.moyNote < 5 %} disable {% endif %}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</section>
+
+{% endblock %}
