@@ -14,21 +14,28 @@
                       <tr class="text-center">
                         <th>Numéro</th>
                         <th>Détails</th>
+                        <th>Montant</th>
                         <th>Statut</th>
                       </tr>
                     </thead>
                     <tbody>
                         {%for commande in utilisateur.livraisons %}
                           <tr class="text-center">
-
-                            <td class="product-name">
-                                <h3>{{ commande.id }}</h3>
+                            <td class="total">
+                                {{ commande.id }}
                             </td>
                             <td class="product-name">
                                 <h3><a href="{{ path('livraison', {'id': commande.id })}}">voir détails</a></h3>
                             </td>
+                            <td class="total">
+                                {% set total = 0 %}
+                                {%for detail in commande.detailLivraisons %}
+                                {% set total = total + detail.livre.prix * detail.quantite %}
+                                {% endfor %}
+                                {{ total }}€
+                            </td>
                             <td class="product-name">
-                                <h3>{{ commande.statut }}</h3>
+                                {{ commande.statut }}
                             </td>
                           </tr><!-- END TR-->
                       {% endfor %}
