@@ -79,6 +79,11 @@ class Livre
      */
     private $stock;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $tendance;
+
     public function __construct()
     {
         $this->genres = new ArrayCollection();
@@ -303,6 +308,18 @@ class Livre
     public function setStock(int $stock): self
     {
         $this->stock = $stock;
+
+        return $this;
+    }
+
+    public function getTendance(): ?bool
+    {
+        return $this->tendance;
+    }
+
+    public function setTendance(bool $tendance): self
+    {
+        $this->tendance = $tendance;
 
         return $this;
     }

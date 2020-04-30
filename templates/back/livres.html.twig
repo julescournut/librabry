@@ -1,0 +1,39 @@
+{% extends 'back/index.html.twig' %}
+
+{% block backContent %}
+<div class="row justify-content-center">
+  <div class="col-md-12 heading-section text-center ftco-animate">
+    <h2>Livres</h2>
+  </div>
+</div
+<div class="card-box">
+    <table id="datatable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Stock</th>
+                <th>Modifier</th>
+                <th>Supprimer</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for livre in livres %}
+        <tr {% if livre.stock < 1 %} style="background-color: rgba(173, 76, 52, 0.2);" {% endif %}>
+            <td>{{livre.id}}</td>
+            <td><a href="{{ path('livre', {'id': livre.id })}}">{{livre.titre}}</a></td>
+            <td>{{livre.stock}}</td>
+            <td>
+                <a href="{{ path('livre_edit', {'id': livre.id })}}"><i class="fa fa-edit"></i></a>
+            </td>
+            <td>
+                <a href="{{ path('livre_remove', {'id': livre.id}) }}" class="deleteItem"><i class="fa fa-trash"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('livre_new') }}" class="btn py-3 px-4 btn-primary btn-add">+ Ajouter un livre</a>
+</div>
+{% endblock %}

@@ -10,12 +10,14 @@ use App\Entity\Livre;
 use App\Entity\Auteur;
 use App\Entity\Livraison;
 use App\Entity\Pays;
+use App\Entity\Utilisateur;
 use App\Repository\GenreRepository;
 use App\Repository\LivreRepository;
 use App\Repository\AuteurRepository;
 use App\Repository\AvisRepository;
 use App\Repository\LivraisonRepository;
 use App\Repository\PaysRepository;
+use App\Repository\UtilisateurRepository;
 
 class SiteController extends AbstractController
 {
@@ -24,7 +26,7 @@ class SiteController extends AbstractController
      */
     public function index(LivreRepository $livre_repo)
     {
-        $livres = $livre_repo->findby([], ['prix' => 'desc'], 8);
+        $livres = $livre_repo->findby(['tendance' => 1], ['prix' => 'desc']);
         foreach ($livres as $livre) {
             $this->computeBookRatings($livre);
         }
@@ -117,17 +119,6 @@ class SiteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/livre_new", name="livre_new")
-     */
-    public function livre_new(AuteurRepository $auteur_repo)
-    {
-        $auteurs = $auteur_repo->findAll();
-        return $this->render('site/livre_new.html.twig', [
-            'auteurs' => $auteurs
-        ]);
-    }
-
     public function computeBookRatings($livre)
     {
         $nbNote = 0;
@@ -154,6 +145,17 @@ class SiteController extends AbstractController
         return $this->render('site/livraison.html.twig', [
             'livraison' => $livraison,
             'pays' => $pays
+        ]);
+    }
+
+    /**
+     * @Route("/commandes", name="commandes")
+     */
+    public function commandes(UtilisateurRepository $util_repo)
+    {
+        $utilisateur = $util_repo->find(1);
+        return $this->render('site/commandes.html.twig', [
+            'utilisateur' => $utilisateur
         ]);
     }
 }

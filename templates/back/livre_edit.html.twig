@@ -1,0 +1,89 @@
+{% extends 'back/index.html.twig' %}
+
+{% block backContent %}
+<div class="row">
+<div class="comment-form-wrap my-form">
+    <div class="col-md-12 heading-section text-center ftco-animate">
+      <h2>Modifier livre {{ livre.titre }}</h2>
+    </div>
+  <form method="POST" class="p-4 bg-light">
+      <div class="row">
+          <div class="col-8">
+              <div class="form-group">
+                <label for="titre">Titre *</label>
+                <input required type="text" class="form-control" value="{{ livre.titre }}" name="titre" id="titre">
+              </div>
+          </div>
+          <div class="col-4">
+              <div class="form-group">
+                <label for="prix">Prix *</label>
+                <input required type="number" value="{{ livre.prix }}" class="form-control" name="prix" id="prix">
+              </div>
+          </div>
+      </div>
+      <div class="form-group">
+        <label for="name">Url Image *</label>
+        <input required type="text" value="{{ livre.image }}" class="form-control" name="image" id="image">
+      </div>
+      <div class="form-group">
+        <label for="auteur">Auteur *</label>
+        <div class="select-wrap">
+            <select required class="form-control" name="auteur" id="auteur" data-toggle="select2">
+                {% for auteur in auteurs %}
+                  <option {% if livre.auteur.id == auteur.id %} selected {%endif%} value="{{ auteur.id }}">{{ auteur.prenom }} {{ auteur.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+      </div>
+      <div class="row">
+          <div class="col-8">
+              <div class="form-group">
+                <label for="auteur">Saga</label>
+                <div class="select-wrap">
+                    <select class="form-control" name="saga" id="saga" data-toggle="select2">
+                        <option value="0">Aucune</option>
+                        {% for saga in sagas %}
+                          <option {% if livre.saga !=null and livre.saga.id == saga.id %} selected {%endif%} value="{{ saga.id }}">{{ saga.titre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+              </div>
+          </div>
+          <div class="col-4">
+              <div class="form-group">
+                <label for="vol">Volume</label>
+                <input type="number" value="{{ livre.volume }}" name="volume" class="form-control" id="vol">
+              </div>
+          </div>
+      </div>
+
+    <div class="form-group">
+      <label>Genres *</label>
+      <select multiple required class="form-control" name="genres_ids[]"  data-toggle="select2">
+          {% for genre in genres %}
+          <option {% if genre in livre.genres %} selected {%endif%} type="checkbox" value="{{genre.id}}" required>{{genre.titre}}</option>
+          {% endfor %}
+      </select>
+    </div>
+
+    <div class="row row-form message-row">
+        <div class="form-group col-12">
+          <label for="message">Résumé *</label>
+          <textarea required name="resume" id="message" cols="30" rows="10" class="form-control">{{ livre.resume }}</textarea>
+        </div>
+    </div>
+
+    <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+      <input type="hidden" name="tendance" value="0">
+      <input type="checkbox" name="tendance" {% if livre.tendance %} checked {% endif %} value="1" class="custom-control-input" id="customControlAutosizing">
+      <label class="custom-control-label" for="customControlAutosizing">En Tendances</label>
+    </div>
+
+    <div class="form-group">
+      <input type="submit" value="Valider" class="btn py-3 px-4 btn-primary">
+    </div>
+
+  </form>
+</div>
+</div>
+{% endblock %}

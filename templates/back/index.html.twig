@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - Back{% endblock %}
+
+{% block body %}
+<section class="ftco-section">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 side-menu">
+            <div class="filter-widget">
+                <h4 style="padding-left: 1em;" class="fw-title">Back</h4>
+                <div class="fw-brand-check filter-genre">
+                    <div class="bc-item">
+                        <a href="{{ path('livres_back') }}">Livres</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 order-1 order-lg-2">
+            {% block backContent %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

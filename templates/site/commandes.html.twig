@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - Mes Commandes{% endblock %}
+
+{% block body %}
+<section class="ftco-section ftco-cart my-cart">
+    <div class="container">
+        <div class="row">
+        <h2 class="mb-4">Mes commandes</h2>
+        <div class="col-md-12 ftco-animate">
+            <div class="cart-list">
+                <table class="table">
+                    <thead class="thead-primary">
+                      <tr class="text-center">
+                        <th>Numéro</th>
+                        <th>Détails</th>
+                        <th>Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {%for commande in utilisateur.livraisons %}
+                          <tr class="text-center">
+
+                            <td class="product-name">
+                                <h3>{{ commande.id }}</h3>
+                            </td>
+                            <td class="product-name">
+                                <h3><a href="{{ path('livraison', {'id': commande.id })}}">voir détails</a></h3>
+                            </td>
+                            <td class="product-name">
+                                <h3>{{ commande.statut }}</h3>
+                            </td>
+                          </tr><!-- END TR-->
+                      {% endfor %}
+                    </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+    </div>
+</section>
+{% endblock %}

@@ -27,6 +27,7 @@
 }
 
 .commentaire .name-and-rating {
+    margin-bottom: 1em;
     width: 100%;
     display: inline-flex;
     justify-content: space-between;
@@ -55,6 +56,7 @@
 
 .breacrumb-section {
     margin-top: 2em;
+    margin-bottom: 1em;
 }
 
 .side-menu {
@@ -138,11 +140,11 @@
 }
 
 #saga, #tendances {
-    padding-top: 10em;
+    padding-top: 2em;
 }
 
 .ftco-section {
-    padding: 2em 0;
+    padding: 1em 0;
 }
 
 .my-form {
@@ -157,4 +159,24 @@
 .my-cart .form-control:focus {
     border-color: #82ae46;
     outline: 0;
+}
+
+.comment-form-wrap {
+    margin-top: 2em;
+}
+
+.row-form {
+    display: inline-flex;
+    width: 100%;
+    margin: 0;
+}
+
+.message-row .col-12 {
+    height: 7em;
+    padding: 0;
+    margin-bottom: 4em;
+}
+
+.btn-add {
+    margin: 2em 0;
 }
