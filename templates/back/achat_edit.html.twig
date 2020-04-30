@@ -1,0 +1,58 @@
+{% extends 'back/index.html.twig' %}
+
+{% block backContent %}
+<div class="row">
+<div class="comment-form-wrap my-form">
+    <div class="col-md-12 heading-section text-center ftco-animate">
+      <h2>Modifier Achat n°{{ achat.id }}</h2>
+    </div>
+  <form method="POST" class="p-4 bg-light">
+      <div class="row">
+          <div class="col-8">
+              <div class="form-group">
+                <label for="livre">Livre *</label>
+                <div class="select-wrap">
+                    <select required class="form-control" name="id_livre" id="livre" data-toggle="select2">
+                        {% for livre in livres %}
+                          <option {% if achat.livre.id == livre.id %} selected {%endif%} value="{{ livre.id }}">{{ livre.titre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+              </div>
+          </div>
+          <div class="col-4">
+              <div class="form-group">
+                <label for="quantite">Quantité *</label>
+                <input required type="number" value="{{ achat.quantite }}" class="form-control" name="quantite" id="quantite">
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-8">
+              <div class="form-group">
+                <label for="fournisseur">Fournisseur *</label>
+                <div class="select-wrap">
+                    <select required class="form-control" name="id_fournisseur" id="fournisseur" data-toggle="select2">
+                        {% for fournisseur in fournisseurs %}
+                          <option {% if achat.fournisseur.id == fournisseur.id %} selected {%endif%} value="{{ fournisseur.id }}">{{ fournisseur.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+              </div>
+          </div>
+          <div class="col-4">
+              <div class="form-group">
+                <label for="prix_achat">Prix Achat (€)*</label>
+                <input required type="number" step="0.1" min=0 value="{{ achat.prixAchat }}" class="form-control" name="prix_achat" id="prix_achat">
+              </div>
+          </div>
+      </div>
+
+    <div class="form-group">
+      <input type="submit" value="Valider" class="btn py-3 px-4 btn-primary">
+    </div>
+
+  </form>
+</div>
+</div>
+{% endblock %}

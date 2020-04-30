@@ -16,6 +16,7 @@ use App\Entity\Pays;
 use App\Entity\Utilisateur;
 use App\Entity\Fournisseur;
 use App\Entity\Adresse;
+use App\Entity\Achat;
 use App\Repository\GenreRepository;
 use App\Repository\LivreRepository;
 use App\Repository\AuteurRepository;
@@ -26,6 +27,7 @@ use App\Repository\UtilisateurRepository;
 use App\Repository\SagaRepository;
 use App\Repository\AdresseRepository;
 use App\Repository\FournisseurRepository;
+use App\Repository\AchatRepository;
 
 
 class BackController extends AbstractController
@@ -272,9 +274,107 @@ class BackController extends AbstractController
     public function fournisseur_remove(Fournisseur $fournisseur, ManagerRegistry $manager)
     {
         $manager = $manager->getManager();
+        $manager->remove($fournisseur->getAdresse());
         $manager->remove($fournisseur);
         $manager->flush();
 
         return $this->redirectToRoute('fournisseurs_back');
+    }
+
+    /**
+     * @Route("/back/achats", name="achats_back")
+     */
+    public function achats(AchatRepository $achat_repo)
+    {
+        $achats = $achat_repo->findAll();
+        return $this->render('back/achats.html.twig', [
+            'achats' => $achats
+        ]);
+    }
+
+    /**
+     * @Route("/back/achat_new", name="achat_new", methods={"GET", "POST"})
+     */
+    public function achat_new(Request $request, ManagerRegistry $manager, LivreRepository $livre_repo, FournisseurRepository $foun_repo)
+    {
+        $livres = $livre_repo->findAll();
+        $fournisseurs = $foun_repo->findAll();
+
+        if($request->request->get('id_livre')) {
+            $id_livre = $request->request->get('id_livre');
+            $livre = $livre_repo->find($id_livre);
+            $id_fournisseur = $request->request->get('id_fournisseur');
+            $fournisseur = $foun_repo->find($id_fournisseur);
+            $quantite = $request->request->get('quantite');
+            $prix_achat = $request->request->get('prix_achat');
+
+            $achat = new Achat();
+            $achat->setLivre($livre);
+            $achat->setFournisseur($fournisseur);
+            $achat->setQuantite($quantite);
+            $livre->setStock($livre->getStock() + $quantite);
+            $achat->setPrixAchat($prix_achat);
+            $achat->setDate(new \DateTime());
+
+            $manager = $manager->getManager();
+            $manager->persist($achat);
+            $manager->flush();
+
+            return $this->redirectToRoute('achats_back');
+        }
+
+        return $this->render('back/achat_new.html.twig', [
+            'livres' => $livres,
+            'fournisseurs' => $fournisseurs
+        ]);
+    }
+
+    /**
+     * @Route("/back/achat_edit/{id}", name="achat_edit", methods={"GET", "POST"})
+     */
+    public function achat_edit(Achat $achat, Request $request, ManagerRegistry $manager, LivreRepository $livre_repo, FournisseurRepository $foun_repo)
+    {
+        $livres = $livre_repo->findAll();
+        $fournisseurs = $foun_repo->findAll();
+
+        if($request->request->get('id_livre')) {
+            $id_livre = $request->request->get('id_livre');
+            $livre = $livre_repo->find($id_livre);
+            $id_fournisseur = $request->request->get('id_fournisseur');
+            $fournisseur = $foun_repo->find($id_fournisseur);
+            $quantite = $request->request->get('quantite');
+            $prix_achat = $request->request->get('prix_achat');
+
+            $achat->setLivre($livre);
+            $achat->setFournisseur($fournisseur);
+            $livre->setStock($livre->getStock() - $achat->getQuantite());
+            $livre->setStock($livre->getStock() + $quantite);
+            $achat->setQuantite($quantite);
+            $achat->setPrixAchat($prix_achat);
+            $achat->setDate(new \DateTime());
+
+            $manager = $manager->getManager();
+            $manager->flush();
+        }
+
+        return $this->render('back/achat_edit.html.twig', [
+            'achat' => $achat,
+            'livres' => $livres,
+            'fournisseurs' => $fournisseurs
+        ]);
+    }
+
+    /**
+     * @Route("/back/achat/remove/{id}", name="achat_remove")
+     */
+    public function achat_remove(Achat $achat, ManagerRegistry $manager)
+    {
+        $manager = $manager->getManager();
+        $livre = $achat->getLivre();
+        $livre->setStock($livre->getStock() - $achat->getQuantite());
+        $manager->remove($achat);
+        $manager->flush();
+
+        return $this->redirectToRoute('achats_back');
     }
 }

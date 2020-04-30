@@ -18,7 +18,7 @@
 }
 
 .filter-genre {
-    padding: 0 0 0 1em;
+    padding: 0 0 2em 1em;
     margin: 0;
 }
 
@@ -179,4 +179,15 @@
 
 .btn-add {
     margin: 2em 0;
+}
+
+.btn.isDisabled {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+  text-decoration: none;
+}
+
+.btn.isDisabled:hover {
+    background: #000000;
+    border: 1px solid #000000;
 }
