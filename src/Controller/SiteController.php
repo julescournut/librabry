@@ -35,6 +35,7 @@ class SiteController extends AbstractController
         ]);
     }
 
+
     public function header(GenreRepository $genre_repo)
     {
         $genres = $genre_repo->findAll();

@@ -32,6 +32,12 @@
         <link href="{{ asset('assets/libs/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/libs/datatables/select.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
 
+        <!-- Chartist Chart CSS -->
+        <link rel="stylesheet" href="{{ asset('assets/libs/chartist/chartist.min.css') }}">
+
+        <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
 
         <link rel="stylesheet" href="{{ asset('assets/css/flaticon.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/icomoon.css') }}">
@@ -44,7 +50,6 @@
         {{ render(controller('App\\Controller\\SiteController::header')) }}
         {% block body %}{% endblock %}
         {% include 'site/footer.html.twig'%}
-        {% block javascripts %}
         <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
 
 
@@ -88,12 +93,19 @@
         <!-- Datatables init -->
         <script src="{{ asset('assets/js/pages/datatables.init.js') }}"></script>
 
+        <!--Chartist Chart-->
+        <script src="{{ asset('assets/libs/chartist/chartist.min.js') }}"></script>
+        <script src="{{ asset('assets/libs/chartist/chartist-plugin-tooltip.min.js') }}"></script>
+        <script src="{{ asset('assets/js/libs/knob/jquery.knob.min.js') }}"></script>
+
         <!-- Init js -->
         <script src="{{ asset('assets/js/pages/responsive-table.init.js') }}"></script>
         <script src="{{ asset('assets/js/pages/form-advanced.init.js') }}"></script>
+        <script src="{{ asset('assets/js/pages/chartist.init.js') }}"></script>
 
         <!-- App js -->
         <script src="{{ asset('assets/js/app.min.js') }}"></script>
+        {% block javascripts %}
         {% endblock %}
     </body>
 </html>

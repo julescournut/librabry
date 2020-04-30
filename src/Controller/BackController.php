@@ -33,11 +33,40 @@ use App\Repository\AchatRepository;
 class BackController extends AbstractController
 {
     /**
-     * @Route("/back", name="back")
+     * @Route("/back", name="dashboard")
      */
-    public function index()
+    public function index(LivraisonRepository $livre_repo, AchatRepository $achat_repo, LivraisonRepository $liv_repo)
     {
-        return $this->render('back/index.html.twig', [
+        $allAchats = $achat_repo->findAll();
+        $allVentes = $liv_repo->findAll();
+
+        $achats_total = 0;
+        $ventes_total = 0;
+        for ($i = 1; $i <= 12; $i++) {
+            $achats[$i] = 0;
+            $ventes[$i] = 0;
+            $benef_total[$i] = 0;
+
+            foreach ($allAchats as $achat) {
+                if ($achat->getDate()->format('m') == $i) {
+                    $achats[$i] += $achat->getQuantite() * $achat->getPrixAchat();
+                    $achats_total += $achat->getQuantite() * $achat->getPrixAchat();
+                }
+            }
+            foreach ($allVentes as $livraison) {
+                if ($livraison->getDateCommande() != null && $livraison->getDateCommande()->format('m') == $i) {
+                    foreach ($livraison->getDetailLivraisons() as $detail) {
+                        $ventes[$i] += $detail->getQuantite() * $detail->getLivre()->getPrix();
+                        $ventes_total += $detail->getQuantite() * $detail->getLivre()->getPrix();
+                    }
+                }
+            }
+        }
+        return $this->render('back/dashboard.html.twig', [
+            'achats_total' => $achats_total,
+            'ventes_total' => $ventes_total,
+            'achats' => $achats,
+            'ventes' => $ventes
         ]);
     }
 

@@ -1,0 +1,44 @@
+{% extends 'back/index.html.twig' %}
+
+{% block backContent %}
+
+<div class="card-box">
+    <h4 class="header-title">Achats / Ventes</h4>
+
+    <div class="mt-4">
+        <div id="byingSelling" class="ct-chart ct-golden-section"></div>
+    </div>
+    <button class="btn" style="background-color: #31ce77">ACHATS : <b>{{ achats_total }}</b></button>
+    <button class="btn" style="background-color: #35b8e0">VENTES :<b>{{ ventes_total }}</b></button>
+    <button class="btn" style="background-color: #f4c63d">BÉNÉFICES :<b> {{ ventes_total - achats_total }}</b></button>
+</div> <!-- end card-box-->
+
+{% endblock %}
+
+
+{% block javascripts %}
+    <script>
+
+        var dataByingSelling = {
+            labels: ['Jan', 'Fev', 'Mars', 'Avril', 'Mai', 'Juin', 'Jul', 'Au', 'Sep', 'Oct', 'Nov', 'Dec'],
+            series: [
+                [{% for data in achats %} {{ data ~ ',' }} {% endfor %}],
+                [{% for data in ventes %} {{ data ~ ',' }} {% endfor %}],
+            ]
+        };
+        var optionsByingSelling = {
+            seriesBarDistance: 15,
+            high: 1000,
+            scaleMinSpace: 20,
+            onlyInteger: true,
+            divisor: 4,
+            axisY: {
+                onlyInteger: true,
+                offset: 10
+            }
+        };
+
+        new Chartist.Bar('#byingSelling', dataByingSelling, optionsByingSelling);
+
+    </script>
+{% endblock %}

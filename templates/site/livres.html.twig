@@ -44,6 +44,12 @@
             </div>
         </div>
         <div class="col-lg-9">
+            <form action="#" class="search-form">
+              <div class="form-group d-flex">
+                <input type="text" class="form-control" placeholder="Tapez le titre de votre livre">
+                <input type="submit" value="Rechercher" class="submit px-3">
+              </div>
+            </form>
             <div class="row">
                 {% for livre in livres %}
                 <div class="col-md-6 col-lg-3 ftco-animate genre-product">
