@@ -14,6 +14,8 @@ use App\Entity\Auteur;
 use App\Entity\Livraison;
 use App\Entity\Pays;
 use App\Entity\Utilisateur;
+use App\Entity\Fournisseur;
+use App\Entity\Adresse;
 use App\Repository\GenreRepository;
 use App\Repository\LivreRepository;
 use App\Repository\AuteurRepository;
@@ -22,6 +24,9 @@ use App\Repository\LivraisonRepository;
 use App\Repository\PaysRepository;
 use App\Repository\UtilisateurRepository;
 use App\Repository\SagaRepository;
+use App\Repository\AdresseRepository;
+use App\Repository\FournisseurRepository;
+
 
 class BackController extends AbstractController
 {
@@ -170,5 +175,106 @@ class BackController extends AbstractController
         $this->addFlash('success', 'Livre supprimé !');
 
         return $this->redirectToRoute('livres_back');
+    }
+
+    /**
+     * @Route("/back/fournisseurs", name="fournisseurs_back")
+     */
+    public function fournisseurs(FournisseurRepository $fourn_repo)
+    {
+        $fournisseurs = $fourn_repo->findAll();
+        return $this->render('back/fournisseurs.html.twig', [
+            'fournisseurs' => $fournisseurs
+        ]);
+    }
+
+    /**
+     * @Route("/back/fournisseur_new", name="fournisseur_new", methods={"GET", "POST"})
+     */
+    public function fournisseur_new(Request $request, ManagerRegistry $manager, PaysRepository $pays_repo)
+    {
+        $pays = $pays_repo->findAll();
+
+        if($request->request->get('nom')) {
+            $nom = $request->request->get('nom');
+            $tel = $request->request->get('tel');
+            $rue = $request->request->get('rue');
+            $code_postal = $request->request->get('code_postal');
+            $ville = $request->request->get('ville');
+            $id_pays = $request->request->get('id_pays');
+            $pays = $pays_repo->find($id_pays);
+
+            $fournisseur = new Fournisseur();
+            $fournisseur->setNom($nom);
+            $fournisseur->setTel($tel);
+            $adresse = new Adresse();
+            $adresse->setRue($rue);
+            $adresse->setCodePostal($code_postal);
+            $adresse->setVille($ville);
+            $adresse->setPays($pays);
+            $fournisseur->setAdresse($adresse);
+
+            $manager = $manager->getManager();
+            $manager->persist($adresse);
+            $manager->persist($fournisseur);
+            $manager->flush();
+
+            return $this->redirectToRoute('fournisseurs_back');
+        }
+
+        return $this->render('back/fournisseur_new.html.twig', [
+            'pays' => $pays
+        ]);
+    }
+
+    /**
+     * @Route("/back/fournisseur_edit/{id}", name="fournisseur_edit", methods={"GET", "POST"})
+     */
+    public function fournisseur_edit(Fournisseur $fournisseur, Request $request, ManagerRegistry $manager, PaysRepository $pays_repo)
+    {
+        $payss = $pays_repo->findAll();
+
+        if($request->request->get('nom')) {
+            $nom = $request->request->get('nom');
+            $tel = $request->request->get('tel');
+            $rue = $request->request->get('rue');
+            $code_postal = $request->request->get('code_postal');
+            $ville = $request->request->get('ville');
+            $id_pays = $request->request->get('id_pays');
+            $pays = $pays_repo->find($id_pays);
+
+            $fournisseur->setNom($nom);
+            $fournisseur->setTel($tel);
+            $four_adresse = $fournisseur->getAdresse();
+            $manager = $manager->getManager();
+            if ($four_adresse->getRue() != $rue || $four_adresse->getCodePostal() != $code_postal || $four_adresse->getVille() != $ville || $four_adresse->getPays()->getID() != $id_pays) {
+                $adresse = new Adresse();
+                $adresse->setRue($rue);
+                $adresse->setCodePostal($code_postal);
+                $adresse->setVille($ville);
+                $adresse->setPays($pays);
+                $fournisseur->setAdresse($adresse);
+                $manager->persist($adresse);
+            }
+
+            $manager->flush();
+        }
+
+        return $this->render('back/fournisseur_edit.html.twig', [
+            'fournisseur' => $fournisseur,
+            'pays' => $payss,
+        ]);
+    }
+
+    /**
+     * @Route("/back/fournisseur/remove/{id}", name="fournisseur_remove")
+     */
+    public function fournisseur_remove(Fournisseur $fournisseur, ManagerRegistry $manager)
+    {
+        $manager = $manager->getManager();
+        $manager->remove($fournisseur);
+        $manager->flush();
+
+        return $this->redirectToRoute('fournisseurs_back');
     }
 }

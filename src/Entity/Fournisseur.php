@@ -30,14 +30,14 @@ class Fournisseur
     private $adresse;
 
     /**
-     * @ORM\Column(type="bigint")
-     */
-    private $tel;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Achat", mappedBy="fournisseur")
      */
     private $achats;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $tel;
 
     public function __construct()
     {
@@ -73,18 +73,6 @@ class Fournisseur
         return $this;
     }
 
-    public function getTel(): ?string
-    {
-        return $this->tel;
-    }
-
-    public function setTel(string $tel): self
-    {
-        $this->tel = $tel;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Achat[]
      */
@@ -112,6 +100,18 @@ class Fournisseur
                 $achat->setFournisseur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTel(): ?string
+    {
+        return $this->tel;
+    }
+
+    public function setTel(string $tel): self
+    {
+        $this->tel = $tel;
 
         return $this;
     }

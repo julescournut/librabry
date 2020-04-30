@@ -17,7 +17,7 @@ class Achat
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\livre", inversedBy="achats")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Livre", inversedBy="achats")
      * @ORM\JoinColumn(nullable=false)
      */
     private $livre;

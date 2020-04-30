@@ -1,0 +1,60 @@
+{% extends 'back/index.html.twig' %}
+
+{% block backContent %}
+<div class="row">
+<div class="comment-form-wrap my-form">
+    <div class="col-md-12 heading-section text-center ftco-animate">
+      <h2>Modifier fournisseur {{ fournisseur.nom }}</h2>
+    </div>
+  <form method="POST" class="p-4 bg-light">
+      <div class="row">
+          <div class="col-6">
+              <div class="form-group">
+                <label for="nom">Nom *</label>
+                <input required type="text" class="form-control" value="{{ fournisseur.nom }}" name="nom" id="nom">
+              </div>
+          </div>
+          <div class="col-6">
+              <div class="form-group">
+                <label for="tel">Tel *</label>
+                <input required type="text" value="{{ fournisseur.tel }}" class="form-control" name="tel" id="tel">
+              </div>
+          </div>
+      </div>
+      <div class="form-group">
+        <label for="rue">Rue *</label>
+        <input required type="text" value="{{ fournisseur.adresse.rue }}" class="form-control" name="rue" id="rue">
+      </div>
+      <div class="row">
+          <div class="col-4">
+              <div class="form-group">
+                <label for="code_postal">Code postal *</label>
+                <input required type="text" class="form-control" value="{{ fournisseur.adresse.codePostal }}" name="code_postal" id="code_postal">
+              </div>
+          </div>
+          <div class="col-8">
+              <div class="form-group">
+                <label for="ville">Ville *</label>
+                <input required type="text" value="{{ fournisseur.adresse.ville }}" class="form-control" name="ville" id="ville">
+              </div>
+          </div>
+      </div>
+      <div class="form-group">
+        <label for="pays">Pays *</label>
+        <div class="select-wrap">
+            <select required class="form-control" name="id_pays" id="pays" data-toggle="select2">
+                {% for p in pays %}
+                  <option {% if fournisseur.adresse.pays.id == p.id %} selected {%endif%} value="{{ p.id }}">{{ p.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+      </div>
+
+    <div class="form-group">
+      <input type="submit" value="Valider" class="btn py-3 px-4 btn-primary">
+    </div>
+
+  </form>
+</div>
+</div>
+{% endblock %}
