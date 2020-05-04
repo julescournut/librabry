@@ -570,6 +570,8 @@ class BackController extends AbstractController
             $manager->persist($genre);
             $manager->flush();
 
+            $this->addFlash('success', 'Genre '.$genre->getTitre().' ajouté !');
+
             return $this->redirectToRoute('genres_back');
         }
 
@@ -590,6 +592,8 @@ class BackController extends AbstractController
 
             $manager = $manager->getManager();
             $manager->flush();
+
+            $this->addFlash('success', 'Genre '.$genre->getTitre().' modifié !');
         }
 
         return $this->render('back/genre_edit.html.twig', [
@@ -606,7 +610,7 @@ class BackController extends AbstractController
         $manager->remove($genre);
         $manager->flush();
 
-        $this->addFlash('success', 'Genre supprimé !');
+        $this->addFlash('success', 'Genre '.$genre->getTitre().' supprimé !');
 
         return $this->redirectToRoute('genres_back');
     }
@@ -632,6 +636,8 @@ class BackController extends AbstractController
 
         $manager = $manager->getManager();
         $manager->flush();
+
+        $this->addFlash('success', 'Commande '.$livraison->getId().' livrée !');
 
         return $this->redirectToRoute('livraisons_back');
     }
