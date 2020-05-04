@@ -58,7 +58,7 @@
                 <br/>
                 <p class="price"><span>{{ livre.prix }}€</span></p>
                 <hr/>
-                <p><a href="#" class="{% if livre.stock < 1 %} isDisabled {%endif%} btn btn-black py-3 px-5">Acheter</a>{% if livre.stock < 1 %}<span> Rupture de stock</span>{%endif%}</p>
+                <p><a href="{{ path('acheter_livre',  {'id' : livraison.id, 'id_livre': livre.id }) }}" class="{% if livre.stock < 1 %} isDisabled {%endif%} btn btn-black py-3 px-5">Acheter</a>{% if livre.stock < 1 %}<span> Rupture de stock</span>{%endif%}</p>
             </div>
         </div>
     </div>

@@ -35,12 +35,12 @@
       <!-- <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Genres</a>
       <div class="dropdown-menu" aria-labelledby="dropdown04">
-          {% for genre in genres %}
-          <a class="dropdown-item" href="{{ path('genre',  {'id' : genre.id }) }}">{{ genre.titre }}</a>
-          {% endfor %}
+          {# for genre in genres #}
+          <a class="dropdown-item" href="#"></a>
+          {# endfor #}
       </div>
     </li> -->
-      <li class="nav-item {% if route == 'livraison' %} cta cta-colored {% endif %}"><a href="{{ path('livraison', {'id': 1}) }}" class="nav-link"><span class="icon-shopping_cart"></span>[2]</a></li>
+      <li class="nav-item {% if route == 'livraison' %} cta cta-colored {% endif %}"><a href="{{ path('livraison_edit', {'id': livraison.id }) }}" class="nav-link"><span class="icon-shopping_cart"></span>[{{ livraison.detailLivraisons | length }}]</a></li>
 
     </ul>
   </div>

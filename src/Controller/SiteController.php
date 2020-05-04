@@ -9,8 +9,10 @@ use App\Entity\Genre;
 use App\Entity\Livre;
 use App\Entity\Auteur;
 use App\Entity\Livraison;
+use App\Entity\DetailLivraison;
 use App\Entity\Pays;
 use App\Entity\Utilisateur;
+use App\Entity\Adresse;
 use App\Repository\GenreRepository;
 use App\Repository\LivreRepository;
 use App\Repository\AuteurRepository;
@@ -18,6 +20,10 @@ use App\Repository\AvisRepository;
 use App\Repository\LivraisonRepository;
 use App\Repository\PaysRepository;
 use App\Repository\UtilisateurRepository;
+use App\Repository\DetailLivraisonRepository;
+
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 class SiteController extends AbstractController
 {
@@ -36,11 +42,23 @@ class SiteController extends AbstractController
     }
 
 
-    public function header(GenreRepository $genre_repo)
+    public function header(LivraisonRepository $livr_repo, UtilisateurRepository $util_repo, ManagerRegistry $manager)
     {
-        $genres = $genre_repo->findAll();
+        $utilisateur_courant = $util_repo->find(1);
+        $livraison = $livr_repo->findby(['utilisateur' => $utilisateur_courant, 'statut' => "Non Validée"]);
+        if (empty($livraison)) {
+            $livraison = new Livraison();
+            $livraison->setUtilisateur($utilisateur_courant);
+            $livraison->setAdresse($utilisateur_courant->getAdresse());
+            $livraison->setStatut('Non Validée');
+            $manager = $manager->getManager();
+            $manager->persist($livraison);
+            $manager->flush();
+        } else {
+            $livraison = $livraison[0];
+        }
         return $this->render('site/header.html.twig', [
-            'genres' => $genres,
+            'livraison' => $livraison,
         ]);
     }
 
@@ -99,7 +117,7 @@ class SiteController extends AbstractController
     /**
      * @Route("/livre/{id}", name="livre")
      */
-    public function livre(Livre $livre, LivreRepository $livre_repo)
+    public function livre(Livre $livre, LivreRepository $livre_repo, ManagerRegistry $manager, LivraisonRepository $livr_repo, UtilisateurRepository $util_repo)
     {
         $this->computeBookRatings($livre);
         $saga = null;
@@ -114,9 +132,23 @@ class SiteController extends AbstractController
                 $this->computeBookRatings($l);
             }
         }
+        $utilisateur_courant = $util_repo->find(1);
+        $livraison = $livr_repo->findby(['utilisateur' => $utilisateur_courant, 'statut' => "Non Validée"]);
+        if (empty($livraison)) {
+            $livraison = new Livraison();
+            $livraison->setUtilisateur($utilisateur_courant);
+            $livraison->setAdresse($utilisateur_courant->getAdresse());
+            $livraison->setStatut('Non Validée');
+            $manager = $manager->getManager();
+            $manager->persist($livraison);
+            $manager->flush();
+        } else {
+            $livraison = $livraison[0];
+        }
         return $this->render('site/livre.html.twig', [
             'livre' => $livre,
             'saga' => $saga,
+            'livraison' => $livraison
         ]);
     }
 
@@ -137,16 +169,100 @@ class SiteController extends AbstractController
         }
     }
 
+    // /**
+    //  * @Route("/livraison/{id}", name="livraison")
+    //  */
+    // public function livraison(Livraison $livraison, PaysRepository $pays_repo)
+    // {
+    //     $pays = $pays_repo->findAll();
+    //     return $this->render('site/livraison.html.twig', [
+    //         'livraison' => $livraison,
+    //         'pays' => $pays
+    //     ]);
+    // }
+
     /**
-     * @Route("/livraison/{id}", name="livraison")
+     * @Route("/livraison_edit/{id}", name="livraison_edit", methods={"GET", "POST"})
      */
-    public function livraison(Livraison $livraison, PaysRepository $pays_repo)
+    public function livraison_edit(Livraison $livraison, ManagerRegistry $manager, Request $request, PaysRepository $pays_repo)
     {
         $pays = $pays_repo->findAll();
+
+        if($request->request->get('rue')) {
+            $livraison->setStatut('En cours');
+            $livraison->setDateCommande(new \DateTime());
+
+            $rue = $request->request->get('rue');
+            $code_postal = $request->request->get('code_postal');
+            $ville = $request->request->get('ville');
+            $id_pays = $request->request->get('id_pays');
+            $pay = $pays_repo->find($id_pays);
+
+            $adresse = new Adresse();
+            $adresse->setRue($rue);
+            $adresse->setCodePostal($code_postal);
+            $adresse->setVille($ville);
+            $adresse->setPays($pay);
+            $livraison->setAdresse($adresse);
+
+            $manager = $manager->getManager();
+            $manager->persist($adresse);
+
+            foreach ($livraison->getDetailLivraisons() as $detail) {
+                $livre = $detail->getLivre();
+                $livre->setStock($livre->getStock() - $detail->getQuantite());
+                $manager->persist($livre);
+            }
+
+            $manager->flush();
+        }
+
+
         return $this->render('site/livraison.html.twig', [
             'livraison' => $livraison,
             'pays' => $pays
         ]);
+    }
+
+    /**
+     * @Route("/back/detail/remove/{id}", name="detail_remove")
+     */
+    public function detail_remove(DetailLivraison $detail, ManagerRegistry $manager)
+    {
+        $manager = $manager->getManager();
+        $manager->remove($detail);
+        $manager->flush();
+
+        return $this->redirectToRoute('livraison_edit', ['id' => $detail->getLivraison()->getId()]);
+    }
+
+    /**
+     * @Route("/acheter_livre/{id}{id_livre}", name="acheter_livre")
+     */
+    public function acheter_livre(Livraison $livraison, $id_livre, LivreRepository $livre_repo,  DetailLivraisonRepository $detail_repo,  ManagerRegistry $manager)
+    {
+        $livre = $livre_repo->find($id_livre);
+        $detail = $detail_repo->findby([
+            "livre" => $livre,
+            "livraison" => $livraison
+        ]);
+        if ($detail == null) {
+            $detail = new DetailLivraison();
+            $detail->setLivraison($livraison);
+            $detail->setLivre($livre);
+            $detail->setQuantite(1);
+        } else {
+            $detail = $detail[0];
+            if ($detail->getQuantite() < $livre->getStock()) {
+                $detail->setQuantite($detail->getQuantite() + 1);
+            }
+        }
+
+        $manager = $manager->getManager();
+        $manager->persist($detail);
+        $manager->flush();
+
+        return $this->redirectToRoute('livraison_edit', ['id' => $livraison->getId()]);
     }
 
     /**
@@ -158,5 +274,16 @@ class SiteController extends AbstractController
         return $this->render('site/commandes.html.twig', [
             'utilisateur' => $utilisateur
         ]);
+    }
+
+    /**
+     * @Route("/setQuantite/{id}{quantite}", name="setQuantite")
+     */
+    public function setQuantite(DetailLivraison $detail, $quantite, ManagerRegistry $manager)
+    {
+        $detail->setQuantite($quantite);
+        $manager = $manager->getManager();
+        $manager->flush();
+        return $this->redirectToRoute('livraison_edit', ['id' => $detail->getLivraison()->getId()]);
     }
 }

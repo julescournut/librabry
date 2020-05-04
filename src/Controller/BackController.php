@@ -606,6 +606,33 @@ class BackController extends AbstractController
         $manager->remove($genre);
         $manager->flush();
 
+        $this->addFlash('success', 'Genre supprimé !');
+
         return $this->redirectToRoute('genres_back');
+    }
+
+    /**
+     * @Route("/back/livraisons", name="livraisons_back")
+     */
+    public function livraisons(LivraisonRepository $livr_repo)
+    {
+        $livraisons = $livr_repo->findAll();
+        return $this->render('back/livraisons.html.twig', [
+            'livraisons' => $livraisons
+        ]);
+    }
+
+    /**
+     * @Route("/back/delivered/{id}", name="delivered")
+     */
+    public function delivered(Livraison $livraison, ManagerRegistry $manager)
+    {
+        $livraison->setStatut('Livrée');
+        $livraison->setDateLivraison(new \DateTime());
+
+        $manager = $manager->getManager();
+        $manager->flush();
+
+        return $this->redirectToRoute('livraisons_back');
     }
 }

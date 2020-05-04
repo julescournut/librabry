@@ -2,16 +2,22 @@
 
 {% block title %} - Mon Panier{% endblock %}
 
+
 {% block body %}
 <section class="ftco-section ftco-cart my-cart">
     <div class="container">
         <div class="row">
+        {% if livraison.detailLivraisons|length == 0 %}
+        <div class="col-md-12 heading-section text-center ftco-animate">
+          <h2>Votre panier est vide</h2>
+        </div>
+        {% else %}
         <div class="col-md-12 ftco-animate">
             <div class="cart-list">
                 <table class="table">
                     <thead class="thead-primary">
                       <tr class="text-center">
-                        <th>&nbsp;</th>
+                        {% if livraison.statut == "Non Validée" %}<th>&nbsp;</th>{%endif%}
                         <th>&nbsp;</th>
                         <th>Livre</th>
                         <th>Prix</th>
@@ -22,7 +28,7 @@
                     <tbody>
                         {%for detail in livraison.detailLivraisons %}
                           <tr class="text-center">
-                            <td class="product-remove"><a href="#"><span class="ion-ios-close"></span></a></td>
+                            {% if livraison.statut == "Non Validée" %} <td class="product-remove"><a href="{{ path('detail_remove', {'id': detail.id}) }}"><span class="ion-ios-close"></span></a></td>{%endif%}
 
                             <td class="image-prod"><div class="img" style="background-image:url({{ detail.livre.image }});"></div></td>
 
@@ -45,7 +51,7 @@
 
                             <td class="quantity">
                                 <div class="input-group mb-3">
-                                <input type="number" name="quantity" class="quantity form-control input-number" value="{{ detail.quantite }}" min="1" max="100">
+                                <input type="number" {# if livraison.statut != "Non Validée"#} disabled {#endif#} name="quantity" class="quantity form-control input-number" value="{{ detail.quantite }}" min="1" max="{{ detail.livre.stock }}">
                             </div>
                           </td>
 
@@ -60,25 +66,26 @@
     <div class="row justify-content-end">
         <div class="col-lg-8 mt-5 cart-wrap ftco-animate">
             <div class="cart-total mb-3">
+                {% if livraison.statut == "Non Validée" %}
                 <h3>Adresse de livraison</h3>
                 <p>Modifiez votre adresse de livraison si différentes de votre adresse.</p>
-                <form action="#" class="bg-light p-5">
+                <form method="POST" class="bg-light p-5" id="adresse_form">
                   <div class="form-group">
                     <label for="country">Adresse</label>
-                    <input type="text" class="form-control text-left px-3" value="{{ livraison.utilisateur.adresse.rue }}">
+                    <input type="text" class="form-control text-left px-3" name="rue" value="{{ livraison.utilisateur.adresse.rue }}">
                   </div>
                   <div class="form-group">
                     <label for="country">Code Postal</label>
-                    <input type="text" class="form-control text-left px-3" value="{{ livraison.utilisateur.adresse.codePostal }}">
+                    <input type="text" class="form-control text-left px-3" name="code_postal" value="{{ livraison.utilisateur.adresse.codePostal }}">
                   </div>
                   <div class="form-group">
                     <label for="country">Ville</label>
-                    <input type="text" class="form-control text-left px-3" value="{{ livraison.utilisateur.adresse.ville }}">
+                    <input type="text" class="form-control text-left px-3" name="ville" value="{{ livraison.utilisateur.adresse.ville }}">
                   </div>
                   <div class="form-group">
                     <label for="pays">Pays</label>
                     <div class="select-wrap">
-                        <select class="form-control" name="pays" id="pays">
+                        <select class="form-control" name="id_pays" id="pays">
                             {% for p in pays %}
                               <option {% if livraison.utilisateur.adresse.pays.id == p.id %} selected {%endif%} value="{{ p.id }}">{{ p.nom }}</option>
                             {% endfor %}
@@ -86,6 +93,20 @@
                     </div>
                   </div>
                 </form>
+                {% elseif livraison.statut == "En cours" %}
+                <h3>Commande en cours de livraison.</h3>
+                <p>Vous serez livré sous 48h (hors week-end et jours fériés) à partir du {{ livraison.dateCommande | date('d/m/Y') }}.</p>
+                <h4>Adresse de livraison</h4>
+                <p>{{ livraison.adresse.rue }},</p>
+                <p>{{ livraison.adresse.codePostal }} {{ livraison.adresse.ville }},</p>
+                <p>{{ livraison.adresse.pays.nom | capitalize }}</p>
+                {% else %}
+                <h3>Commande livrée le {{ livraison.dateLivraison | date('d/m/Y')}}.</h3>
+                <h4>Adresse de livraison</h4>
+                <p>{{ livraison.adresse.rue }},</p>
+                <p>{{ livraison.adresse.codePostal }} {{ livraison.adresse.ville }},</p>
+                <p>{{ livraison.adresse.pays.nom | capitalize }}</p>
+                {% endif %}
             </div>
         </div>
         <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
@@ -108,9 +129,12 @@
                     <span>Total</span>
                     <span>{{ total }}€</span>
                 </p>
+                {% if livraison.statut == "Non Validée" and total > 0 %}
+                <input type="submit" form="adresse_form" value="Acheter" class="btn py-3 px-4 btn-primary">
+                {% endif %}
             </div>
-            <p><a href="checkout.html" class="btn btn-primary py-3 px-4">Acheter</a></p>
         </div>
+        {% endif %}
     </div>
     </div>
 </section>

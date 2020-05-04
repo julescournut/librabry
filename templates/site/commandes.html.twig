@@ -20,24 +20,26 @@
                     </thead>
                     <tbody>
                         {%for commande in utilisateur.livraisons %}
+                            {% set total = 0 %}
+                            {%for detail in commande.detailLivraisons %}
+                            {% set total = total + detail.livre.prix * detail.quantite %}
+                            {% endfor %}
+                            {% if total != 0 %}
                           <tr class="text-center">
                             <td class="total">
                                 {{ commande.id }}
                             </td>
                             <td class="product-name">
-                                <h3><a href="{{ path('livraison', {'id': commande.id })}}">voir détails</a></h3>
+                                <h3><a href="{{ path('livraison_edit', {'id': commande.id })}}">voir détails</a></h3>
                             </td>
                             <td class="total">
-                                {% set total = 0 %}
-                                {%for detail in commande.detailLivraisons %}
-                                {% set total = total + detail.livre.prix * detail.quantite %}
-                                {% endfor %}
                                 {{ total }}€
                             </td>
                             <td class="product-name">
                                 {{ commande.statut }}
                             </td>
                           </tr><!-- END TR-->
+                          {% endif %}
                       {% endfor %}
                     </tbody>
                   </table>
