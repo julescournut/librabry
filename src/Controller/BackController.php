@@ -17,6 +17,7 @@ use App\Entity\Utilisateur;
 use App\Entity\Fournisseur;
 use App\Entity\Adresse;
 use App\Entity\Achat;
+use App\Entity\Saga;
 use App\Repository\GenreRepository;
 use App\Repository\LivreRepository;
 use App\Repository\AuteurRepository;
@@ -28,6 +29,8 @@ use App\Repository\SagaRepository;
 use App\Repository\AdresseRepository;
 use App\Repository\FournisseurRepository;
 use App\Repository\AchatRepository;
+
+use App\Form\SagaType;
 
 
 class BackController extends AbstractController
@@ -405,5 +408,68 @@ class BackController extends AbstractController
         $manager->flush();
 
         return $this->redirectToRoute('achats_back');
+    }
+
+    /**
+     * @Route("/back/sagas", name="sagas_back")
+     */
+    public function sagas(SagaRepository $saga_repo)
+    {
+        $sagas = $saga_repo->findAll();
+        return $this->render('back/sagas.html.twig', [
+            'sagas' => $sagas
+        ]);
+    }
+
+    /**
+     * @Route("/back/saga_new", name="saga_new", methods={"GET", "POST"})
+     */
+    public function saga_new(Request $request, ManagerRegistry $manager)
+    {
+        $saga = new Saga();
+        $form = $this->CreateForm(SagaType::class, $saga);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $manager = $manager->getManager();
+            $manager->persist($saga);
+            $manager->flush();
+        }
+
+        return $this->render('back/saga_new.html.twig', [
+            'sagaform' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/back/saga_edit/{id}", name="saga_edit", methods={"GET", "POST"})
+     */
+    public function saga_edit(Saga $saga, Request $request, ManagerRegistry $manager)
+    {
+        if($request->request->get('titre')) {
+            $titre = $request->request->get('titre');
+
+            $saga->setTitre($titre);
+
+            $manager = $manager->getManager();
+            $manager->flush();
+        }
+
+        return $this->render('back/saga_edit.html.twig', [
+            'saga' => $saga,
+        ]);
+    }
+
+    /**
+     * @Route("/back/saga/remove/{id}", name="saga_remove")
+     */
+    public function saga_remove(Saga $saga, ManagerRegistry $manager)
+    {
+        $manager = $manager->getManager();
+        $manager->remove($saga);
+        $manager->flush();
+
+        return $this->redirectToRoute('sagas_back');
     }
 }
