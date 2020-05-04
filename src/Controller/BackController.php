@@ -32,6 +32,7 @@ use App\Repository\AchatRepository;
 
 use App\Form\SagaType;
 use App\Form\AuteurType;
+use App\Form\GenreType;
 
 
 class BackController extends AbstractController
@@ -541,5 +542,70 @@ class BackController extends AbstractController
         $manager->flush();
 
         return $this->redirectToRoute('auteurs_back');
+    }
+
+    /**
+     * @Route("/back/genres", name="genres_back")
+     */
+    public function genres(GenreRepository $genre_repo)
+    {
+        $genres = $genre_repo->findAll();
+        return $this->render('back/genres.html.twig', [
+            'genres' => $genres
+        ]);
+    }
+
+    /**
+     * @Route("/back/genre_new", name="genre_new", methods={"GET", "POST"})
+     */
+    public function genre_new(Request $request, ManagerRegistry $manager)
+    {
+        $genre = new Genre();
+        $form = $this->CreateForm(GenreType::class, $genre);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $manager = $manager->getManager();
+            $manager->persist($genre);
+            $manager->flush();
+
+            return $this->redirectToRoute('genres_back');
+        }
+
+        return $this->render('back/genre_new.html.twig', [
+            'genreform' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/back/genre_edit/{id}", name="genre_edit", methods={"GET", "POST"})
+     */
+    public function genre_edit(Genre $genre, Request $request, ManagerRegistry $manager)
+    {
+        if($request->request->get('titre')) {
+            $titre = $request->request->get('titre');
+
+            $genre->setTitre($titre);
+
+            $manager = $manager->getManager();
+            $manager->flush();
+        }
+
+        return $this->render('back/genre_edit.html.twig', [
+            'genre' => $genre,
+        ]);
+    }
+
+    /**
+     * @Route("/back/genre_remove/{id}", name="genre_remove")
+     */
+    public function genre_remove(Genre $genre, ManagerRegistry $manager)
+    {
+        $manager = $manager->getManager();
+        $manager->remove($genre);
+        $manager->flush();
+
+        return $this->redirectToRoute('genres_back');
     }
 }

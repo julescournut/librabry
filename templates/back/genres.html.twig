@@ -1,0 +1,37 @@
+{% extends 'back/index.html.twig' %}
+
+{% block backContent %}
+<div class="row justify-content-center">
+  <div class="col-md-12 heading-section text-center ftco-animate">
+    <h2>Genres</h2>
+  </div>
+</div
+<div class="card-box">
+    <table id="datatable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Modifier</th>
+                <th>Supprimer</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for genre in genres %}
+        <tr>
+            <td>{{genre.id}}</td>
+            <td>{{genre.titre}}</td>
+            <td>
+                <a href="{{ path('genre_edit', {'id': genre.id })}}"><i class="fa fa-edit"></i></a>
+            </td>
+            <td>
+                <a href="{{ path('genre_remove', {'id': genre.id })}}" class="deleteItem"><i class="fa fa-trash"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('genre_new') }}" class="btn py-3 px-4 btn-primary btn-add">+ Ajouter un genre</a>
+</div>
+{% endblock %}
