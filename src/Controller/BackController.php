@@ -31,6 +31,7 @@ use App\Repository\FournisseurRepository;
 use App\Repository\AchatRepository;
 
 use App\Form\SagaType;
+use App\Form\AuteurType;
 
 
 class BackController extends AbstractController
@@ -435,6 +436,8 @@ class BackController extends AbstractController
             $manager = $manager->getManager();
             $manager->persist($saga);
             $manager->flush();
+
+            return $this->redirectToRoute('sagas_back');
         }
 
         return $this->render('back/saga_new.html.twig', [
@@ -471,5 +474,72 @@ class BackController extends AbstractController
         $manager->flush();
 
         return $this->redirectToRoute('sagas_back');
+    }
+
+    /**
+     * @Route("/back/auteurs", name="auteurs_back")
+     */
+    public function auteurs(AuteurRepository $auteur_repo)
+    {
+        $auteurs = $auteur_repo->findAll();
+        return $this->render('back/auteurs.html.twig', [
+            'auteurs' => $auteurs
+        ]);
+    }
+
+    /**
+     * @Route("/back/auteur_new", name="auteur_new", methods={"GET", "POST"})
+     */
+    public function auteur_new(Request $request, ManagerRegistry $manager)
+    {
+        $auteur = new Auteur();
+        $form = $this->CreateForm(AuteurType::class, $auteur);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $manager = $manager->getManager();
+            $manager->persist($auteur);
+            $manager->flush();
+
+            return $this->redirectToRoute('auteurs_back');
+        }
+
+        return $this->render('back/auteur_new.html.twig', [
+            'auteurform' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/back/auteur_edit/{id}", name="auteur_edit", methods={"GET", "POST"})
+     */
+    public function auteur_edit(Auteur $auteur, Request $request, ManagerRegistry $manager)
+    {
+        if($request->request->get('prenom')) {
+            $prenom = $request->request->get('prenom');
+            $nom = $request->request->get('nom');
+
+            $auteur->setPrenom($prenom);
+            $auteur->setNom($nom);
+
+            $manager = $manager->getManager();
+            $manager->flush();
+        }
+
+        return $this->render('back/auteur_edit.html.twig', [
+            'auteur' => $auteur,
+        ]);
+    }
+
+    /**
+     * @Route("/back/auteur_remove/{id}", name="auteur_remove")
+     */
+    public function auteur_remove(Auteur $auteur, ManagerRegistry $manager)
+    {
+        $manager = $manager->getManager();
+        $manager->remove($auteur);
+        $manager->flush();
+
+        return $this->redirectToRoute('auteurs_back');
     }
 }
