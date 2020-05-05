@@ -87,30 +87,27 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="meta">{{ a.dateAjout | date("\\L\\e d/m/y à h:i") }}</div>
+                <div class="meta">{{ a.dateAjout | date("\\L\\e d/m/y à H:i") }}</div>
                 <p class="card-text">{{ a.message }}</p>
             </div>
       </div>
       {% endfor %}
       <!-- END comment-list -->
 
+      {% if app.user %}
       <div class="comment-form-wrap">
         <h3>Donner votre avis</h3>
-        <form action="#" class="p-3 bg-light">
+        <form action="{{ path('avis_new', {'id': livre.id}) }}" method="POST" class="p-3 bg-light">
             <div class="row row-form">
                 <div class="form-group col-6">
-                  <label for="name">Nom *</label>
-                  <input type="text" class="form-control" id="nom">
-                </div>
-                <div class="form-group col-6">
                   <label for="note">Notes (entre 0 et 5) *</label>
-                  <input type="number" value="5" min="0" max="5" class="form-control" id="note">
+                  <input name="note" type="number" required value="5" min="0" max="5" class="form-control" id="note">
                 </div>
             </div>
             <div class="row row-form message-row">
               <div class="form-group col-12">
                 <label for="message">Message</label>
-                <textarea name="" id="message" cols="30" rows="10" class="form-control"></textarea>
+                <textarea required name="message" id="message" cols="30" rows="10" class="form-control"></textarea>
               </div>
             </div>
             <div class="row row-form">
@@ -121,6 +118,9 @@
 
         </form>
       </div>
+      {% else %}
+      <h3>Pour donner votre avis, <a href="{{ path('security_login') }}">connectez-vous</a> !</h3>
+      {% endif %}
     </div>
 
 </div>

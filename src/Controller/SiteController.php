@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Genre;
 use App\Entity\Livre;
 use App\Entity\Auteur;
+use App\Entity\Avis;
 use App\Entity\Livraison;
 use App\Entity\DetailLivraison;
 use App\Entity\Pays;
@@ -96,12 +97,17 @@ class SiteController extends AbstractController
     }
 
     /**
-     * @Route("/livres", name="livres")
+     * @Route("/livres", name="livres", methods={"GET", "POST"})
      */
-    public function livres(GenreRepository $genre_repo, LivreRepository $livre_repo, AuteurRepository $auteur_repo)
+    public function livres(Request $request, GenreRepository $genre_repo, LivreRepository $livre_repo, AuteurRepository $auteur_repo)
     {
         $genres = $genre_repo->findAll();
-        $livres = $livre_repo->findAll();
+        if($request->request->get('search')) {
+            $search = $request->request->get('search');
+            $livres = $livre_repo->findByTitle($search);
+        } else {
+            $livres = $livre_repo->findAll();
+        }
         $auteurs = $auteur_repo->findAll();
         foreach ($livres as $livre) {
             $this->computeBookRatings($livre);
@@ -308,5 +314,36 @@ class SiteController extends AbstractController
         $manager->flush();
 
         return $this->redirectToRoute('livraison_edit', ['id' => $livraison->getId()]);
+    }
+
+    /**
+     * @Route("/user/avis_new/{id}", name="avis_new", methods={"GET", "POST"})
+     */
+    public function avis_new(Livre $livre, ManagerRegistry $manager, Request $request)
+    {
+        if($request->request->get('note')) {
+            $note = $request->request->get('note');
+            $message = $request->request->get('message');
+            $utilisateur = $this->getUser();
+
+            $avis = new Avis();
+            if ($note < 0) {
+                $note = 0;
+            }
+            if ($note > 5) {
+                $note = 5;
+            }
+            $avis->setDateAjout(new \DateTime());
+            $avis->setNote($note);
+            $avis->setMessage($message);
+            $avis->setLivre($livre);
+            $avis->setUtilisateur($utilisateur);
+
+            $manager = $manager->getManager();
+            $manager->persist($avis);
+            $manager->flush();
+        }
+
+        return $this->redirectToRoute('livre', ['id' => $livre->getId()]);
     }
 }

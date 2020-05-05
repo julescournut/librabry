@@ -21,6 +21,9 @@
     <div class="row">
         <div class="col-lg-3 side-menu">
             <div class="filter-widget">
+                <a style="font-size: 1.3em;" href="{{ path('livres') }}">Tous les livres</a>
+            </div>
+            <div class="filter-widget">
                 <h4 class="fw-title">Genres</h4>
                 <div class="fw-brand-check filter-genre">
                     {% for g in genres %}
@@ -44,9 +47,9 @@
             </div>
         </div>
         <div class="col-lg-9">
-            <form action="#" class="search-form">
+            <form action="{{ path('livres') }}" method="POST" class="search-form">
               <div class="form-group d-flex">
-                <input type="text" class="form-control" placeholder="Tapez le titre de votre livre">
+                <input type="text" name="search" class="form-control" placeholder="Tapez le titre de votre livre">
                 <input type="submit" value="Rechercher" class="submit px-3">
               </div>
             </form>
