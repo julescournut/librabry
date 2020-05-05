@@ -43,21 +43,18 @@ class SiteController extends AbstractController
     }
 
 
-    public function header(LivraisonRepository $livr_repo, UtilisateurRepository $util_repo, ManagerRegistry $manager, PaysRepository $pays_repo)
+    public function header(LivraisonRepository $livr_repo, UtilisateurRepository $util_repo, ManagerRegistry $manager, PaysRepository $pays_repo, AdresseRepository $adresse_repo)
     {
-        $utilisateur_courant = $util_repo->find(7);
-        $livraison = $livr_repo->findby(['utilisateur' => $utilisateur_courant, 'statut' => "Non Validée"]);
-        if (empty($livraison)) {
-            $livraison = new Livraison();
-            $livraison->setUtilisateur($utilisateur_courant);
-            $adresse = $adresse_repo->find(1);
-            $livraison->setAdresse($adresse);
-            $livraison->setStatut('Non Validée');
-            $manager = $manager->getManager();
-            $manager->persist($livraison);
-            $manager->flush();
+        $utilisateur_courant = $this->getUser();
+        if ($utilisateur_courant == null) {
+            $livraison = null;
         } else {
-            $livraison = $livraison[0];
+            $livraison = $livr_repo->findby(['utilisateur' => $utilisateur_courant, 'statut' => "Non Validée"]);
+            if (empty($livraison)) {
+                $livraison = null;
+            } else {
+                $livraison = $livraison[0];
+            }
         }
         return $this->render('site/header.html.twig', [
             'livraison' => $livraison,
@@ -134,19 +131,16 @@ class SiteController extends AbstractController
                 $this->computeBookRatings($l);
             }
         }
-        $utilisateur_courant = $util_repo->find(7);
-        $livraison = $livr_repo->findby(['utilisateur' => $utilisateur_courant, 'statut' => "Non Validée"]);
-        if (empty($livraison)) {
-            $livraison = new Livraison();
-            $livraison->setUtilisateur($utilisateur_courant);
-            $adresse = $adresse_repo->find(1);
-            $livraison->setAdresse($adresse);
-            $livraison->setStatut('Non Validée');
-            $manager = $manager->getManager();
-            $manager->persist($livraison);
-            $manager->flush();
+        $utilisateur_courant = $this->getUser();
+        if ($utilisateur_courant == null) {
+            $livraison = null;
         } else {
-            $livraison = $livraison[0];
+            $livraison = $livr_repo->findby(['utilisateur' => $utilisateur_courant, 'statut' => "Non Validée"]);
+            if (empty($livraison)) {
+                $livraison = null;
+            } else {
+                $livraison = $livraison[0];
+            }
         }
         return $this->render('site/livre.html.twig', [
             'livre' => $livre,
@@ -171,18 +165,6 @@ class SiteController extends AbstractController
             $livre->moyNote = 0;
         }
     }
-
-    // /**
-    //  * @Route("/livraison/{id}", name="livraison")
-    //  */
-    // public function livraison(Livraison $livraison, PaysRepository $pays_repo)
-    // {
-    //     $pays = $pays_repo->findAll();
-    //     return $this->render('site/livraison.html.twig', [
-    //         'livraison' => $livraison,
-    //         'pays' => $pays
-    //     ]);
-    // }
 
     /**
      * @Route("/user/livraison_edit/{id}", name="livraison_edit", methods={"GET", "POST"})
@@ -228,7 +210,7 @@ class SiteController extends AbstractController
     }
 
     /**
-     * @Route("/back/detail/remove/{id}", name="detail_remove")
+     * @Route("/user/detail/remove/{id}", name="detail_remove")
      */
     public function detail_remove(DetailLivraison $detail, ManagerRegistry $manager)
     {
@@ -273,7 +255,7 @@ class SiteController extends AbstractController
      */
     public function commandes(UtilisateurRepository $util_repo)
     {
-        $utilisateur = $util_repo->find(1);
+        $utilisateur = $this->getUser();
         return $this->render('user/commandes.html.twig', [
             'utilisateur' => $utilisateur
         ]);
@@ -288,5 +270,43 @@ class SiteController extends AbstractController
         $manager = $manager->getManager();
         $manager->flush();
         return $this->redirectToRoute('livraison_edit', ['id' => $detail->getLivraison()->getId()]);
+    }
+
+    /**
+     * @Route("/user/livraison_new/{id_livre}", name="livraison_new")
+     */
+    public function livraison_new($id_livre, ManagerRegistry $manager, LivreRepository $livre_repo, DetailLivraisonRepository $detail_repo)
+    {
+        $livraison = new Livraison();
+        $utilisateur = $this->getUser();
+        $livraison->setUtilisateur($utilisateur);
+        $livraison->setStatut('Non Validée');
+
+        $manager = $manager->getManager();
+        $manager->persist($livraison);
+
+        if ($id_livre != -1) {
+            $livre = $livre_repo->find($id_livre);
+            $detail = $detail_repo->findby([
+                "livre" => $livre,
+                "livraison" => $livraison
+            ]);
+            if ($detail == null) {
+                $detail = new DetailLivraison();
+                $detail->setLivraison($livraison);
+                $detail->setLivre($livre);
+                $detail->setQuantite(1);
+            } else {
+                $detail = $detail[0];
+                if ($detail->getQuantite() < $livre->getStock()) {
+                    $detail->setQuantite($detail->getQuantite() + 1);
+                }
+            }
+            $manager->persist($detail);
+        }
+
+        $manager->flush();
+
+        return $this->redirectToRoute('livraison_edit', ['id' => $livraison->getId()]);
     }
 }

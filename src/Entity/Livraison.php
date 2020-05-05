@@ -20,7 +20,7 @@ class Livraison
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Adresse", inversedBy="livraisons")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $adresse;
 

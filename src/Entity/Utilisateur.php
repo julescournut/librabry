@@ -58,10 +58,17 @@ class Utilisateur implements UserInterface
      */
     public $confirm_password;
 
+    /**
+    * @var array
+    * @ORM\Column(type="array")
+    */
+   private $roles;
+
     public function __construct()
     {
         $this->livraisons = new ArrayCollection();
         $this->avis = new ArrayCollection();
+        $this->roles = ['ROLE_USER'];
     }
 
     public function getId(): ?int
@@ -176,7 +183,24 @@ class Utilisateur implements UserInterface
 
     public function getSalt() {}
 
-    public function getRoles() {
-        return ['ROLE_USER'];
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles)
+    {
+        if (!in_array('ROLE_USER', $roles))
+        {
+            $roles[] = 'ROLE_USER';
+        }
+        foreach ($roles as $role)
+        {
+            if(substr($role, 0, 5) !== 'ROLE_') {
+                throw new InvalidArgumentException("Chaque rôle doit commencer par 'ROLE_'");
+            }
+        }
+        $this->roles = $roles;
+        return $this;
     }
 }
