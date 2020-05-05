@@ -5,7 +5,12 @@
   <div class="col-md-12 heading-section text-center ftco-animate">
     <h2>Achats</h2>
   </div>
-</div
+</div>
+{% for message in app.flashes('success') %}
+ <div class="alert alert-success">
+     {{ message}}
+ </div>
+{% endfor %}
 <div class="card-box">
     <table id="datatable" class="table table-bordered">
         <thead>

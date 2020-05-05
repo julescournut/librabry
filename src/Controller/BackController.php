@@ -131,6 +131,8 @@ class BackController extends AbstractController
             $manager->persist($livre);
             $manager->flush();
 
+            $this->addFlash('success', 'Livre '.$livre->getTitre().' ajouté !');
+
             return $this->redirectToRoute('livres_back');
         }
 
@@ -187,6 +189,8 @@ class BackController extends AbstractController
 
             $livre->setStock(0);
 
+            $this->addFlash('success', 'Livre '.$livre->getTitre().' modifié !');
+
             $manager = $manager->getManager();
             $manager->flush();
         }
@@ -208,7 +212,7 @@ class BackController extends AbstractController
         $manager->remove($livre);
         $manager->flush();
 
-        $this->addFlash('success', 'Livre supprimé !');
+        $this->addFlash('success', 'Livre '.$livre->getTitre().' supprimé !');
 
         return $this->redirectToRoute('livres_back');
     }
@@ -255,6 +259,8 @@ class BackController extends AbstractController
             $manager->persist($fournisseur);
             $manager->flush();
 
+            $this->addFlash('success', 'Fournisseur '.$fournisseur->getNom().' ajouté !');
+
             return $this->redirectToRoute('fournisseurs_back');
         }
 
@@ -294,6 +300,8 @@ class BackController extends AbstractController
             }
 
             $manager->flush();
+
+            $this->addFlash('success', 'Fournisseur '.$fournisseur->getNom().' modifié !');
         }
 
         return $this->render('back/fournisseur_edit.html.twig', [
@@ -311,6 +319,8 @@ class BackController extends AbstractController
         $manager->remove($fournisseur->getAdresse());
         $manager->remove($fournisseur);
         $manager->flush();
+
+        $this->addFlash('success', 'Fournisseur '.$fournisseur->getNom().' supprimé !');
 
         return $this->redirectToRoute('fournisseurs_back');
     }
@@ -354,6 +364,8 @@ class BackController extends AbstractController
             $manager->persist($achat);
             $manager->flush();
 
+            $this->addFlash('success', 'Achat n°'.$achat->getId().' ajouté !');
+
             return $this->redirectToRoute('achats_back');
         }
 
@@ -389,6 +401,8 @@ class BackController extends AbstractController
 
             $manager = $manager->getManager();
             $manager->flush();
+
+            $this->addFlash('success', 'Achat n°'.$achat->getId().' modifié !');
         }
 
         return $this->render('back/achat_edit.html.twig', [
@@ -408,6 +422,8 @@ class BackController extends AbstractController
         $livre->setStock($livre->getStock() - $achat->getQuantite());
         $manager->remove($achat);
         $manager->flush();
+
+        $this->addFlash('success', 'Achat n°'.$achat->getId().' supprimé !');
 
         return $this->redirectToRoute('achats_back');
     }
@@ -438,6 +454,8 @@ class BackController extends AbstractController
             $manager->persist($saga);
             $manager->flush();
 
+            $this->addFlash('success', 'Saga '.$saga->getTitre().' ajoutée !');
+
             return $this->redirectToRoute('sagas_back');
         }
 
@@ -458,6 +476,8 @@ class BackController extends AbstractController
 
             $manager = $manager->getManager();
             $manager->flush();
+
+            $this->addFlash('success', 'Saga '.$saga->getTitre().' modifiée !');
         }
 
         return $this->render('back/saga_edit.html.twig', [
@@ -473,6 +493,8 @@ class BackController extends AbstractController
         $manager = $manager->getManager();
         $manager->remove($saga);
         $manager->flush();
+
+        $this->addFlash('success', 'Saga '.$saga->getTitre().' supprimée !');
 
         return $this->redirectToRoute('sagas_back');
     }
@@ -503,6 +525,8 @@ class BackController extends AbstractController
             $manager->persist($auteur);
             $manager->flush();
 
+            $this->addFlash('success', 'Auteur '.$auteur->getNom().' ajouté !');
+
             return $this->redirectToRoute('auteurs_back');
         }
 
@@ -525,6 +549,8 @@ class BackController extends AbstractController
 
             $manager = $manager->getManager();
             $manager->flush();
+
+            $this->addFlash('success', 'Auteur '.$auteur->getNom().' modifié !');
         }
 
         return $this->render('back/auteur_edit.html.twig', [
@@ -540,6 +566,8 @@ class BackController extends AbstractController
         $manager = $manager->getManager();
         $manager->remove($auteur);
         $manager->flush();
+
+        $this->addFlash('success', 'Auteur '.$auteur->getNom().' supprimé !');
 
         return $this->redirectToRoute('auteurs_back');
     }

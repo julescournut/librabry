@@ -5,7 +5,12 @@
 <div class="comment-form-wrap my-form">
     <div class="col-md-12 heading-section text-center ftco-animate">
       <h2>Modifier auteur {{ auteur.prenom~' '~auteur.nom }}</h2>
-    </div>
+  </div>
+  {% for message in app.flashes('success') %}
+   <div class="alert alert-success">
+       {{ message}}
+   </div>
+  {% endfor %}
   <form method="POST" class="p-4 bg-light">
       <div class="form-group">
         <label for="prenom">Prénom *</label>
@@ -19,6 +24,7 @@
 
     <div class="form-group">
       <input type="submit" value="Valider" class="btn py-3 px-4 btn-primary">
+      <a href="{{ path('auteurs_back') }}">&nbsp;&nbsp;&nbsp;retour</a>
     </div>
 
   </form>
