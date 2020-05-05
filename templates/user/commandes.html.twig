@@ -7,7 +7,13 @@
     <div class="container">
         <div class="row">
         <h2 class="mb-4">Mes commandes</h2>
+        {% if utilisateur.livraisons|length == 0 %}
+        <div class="col-md-12 heading-section text-center ftco-animate">
+          <h4>Vous n'avez passé aucunes commandes</h4>
+        </div>
+        {% else %}
         <div class="col-md-12 ftco-animate">
+
             <div class="cart-list">
                 <table class="table">
                     <thead class="thead-primary">
@@ -45,6 +51,7 @@
                   </table>
               </div>
           </div>
+          {% endif %}
       </div>
     </div>
 </section>

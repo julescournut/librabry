@@ -95,6 +95,13 @@
       <!-- END comment-list -->
 
       {% if app.user %}
+      {% set user_ids = [] %}
+      {% for avis in livre.avis %}
+      {% set user_ids = user_ids|merge([avis.utilisateur.id]) %}
+      {% endfor %}
+      {% if app.user.id in user_ids %}
+      <h3 style="margin-top: 2em;">Merci pour votre avis !</h3>
+      {% else %}
       <div class="comment-form-wrap">
         <h3>Donner votre avis</h3>
         <form action="{{ path('avis_new', {'id': livre.id}) }}" method="POST" class="p-3 bg-light">
@@ -118,6 +125,7 @@
 
         </form>
       </div>
+      {% endif %}
       {% else %}
       <h3>Pour donner votre avis, <a href="{{ path('security_login') }}">connectez-vous</a> !</h3>
       {% endif %}
