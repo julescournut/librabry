@@ -5,11 +5,18 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UtilisateurRepository")
+ * @UniqueEntity(
+ *   fields= {"email"},
+ *   message= "Email déjà utilisé"
+ * )
  */
-class Utilisateur
+class Utilisateur implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -20,6 +27,7 @@ class Utilisateur
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email()
      */
     private $email;
 
@@ -28,11 +36,6 @@ class Utilisateur
      */
     private $pseudo;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Adresse", inversedBy="utilisateurs")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $adresse;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Livraison", mappedBy="utilisateur")
@@ -43,6 +46,17 @@ class Utilisateur
      * @ORM\OneToMany(targetEntity="App\Entity\Avis", mappedBy="utilisateur", orphanRemoval=true)
      */
     private $avis;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire minimum 8 caractères")
+     */
+    private $password;
+
+    /**
+     * @Assert\EqualTo(propertyPath="password",  message="Votre mot de passe doit être identique")
+     */
+    public $confirm_password;
 
     public function __construct()
     {
@@ -72,21 +86,14 @@ class Utilisateur
         return $this->pseudo;
     }
 
+    public function getUsername(): ?string
+    {
+        return $this->pseudo;
+    }
+
     public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
-
-        return $this;
-    }
-
-    public function getAdresse(): ?adresse
-    {
-        return $this->adresse;
-    }
-
-    public function setAdresse(?adresse $adresse): self
-    {
-        $this->adresse = $adresse;
 
         return $this;
     }
@@ -151,5 +158,25 @@ class Utilisateur
         }
 
         return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function eraseCredentials() {}
+
+    public function getSalt() {}
+
+    public function getRoles() {
+        return ['ROLE_USER'];
     }
 }

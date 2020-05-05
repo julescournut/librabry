@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="comment-form-wrap my-form">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+              <h2>Connexion</h2>
+            </div>
+            <form method="POST" action="{{ path('security_login')}}" class="bg-light p-4">
+                <div class="form-group">
+                    <input placeholder="Adresse email..." required name="_username" type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input placeholder="Mot de passe..." required name="_password" type="password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn py-3 px-4 btn-primary">Connexion</button>
+                </div>
+                <h6>Pas encore inscrit ? <a href="{{ path('security_registration') }}">Créer un compte</a></h6>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="comment-form-wrap my-form">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+              <h2>Inscription</h2>
+            </div>
+        {{ form_start(form, { 'attr' : { 'class': 'bg-light p-4' }} ) }}
+
+        {{ form_widget(form) }}
+
+        <button type="submit" class="btn py-3 px-4 btn-primary">Valider</button>
+        {{ form_end(form) }}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -31,16 +31,20 @@
     <ul class="navbar-nav ml-auto">
       <li class="nav-item {% if route == 'index' %} active {% endif %}"><a href="/#tendances" class="nav-link">Tendances</a></li>
       <li class="nav-item {% if route == 'livres' %} active {% endif %}"><a href="{{ path('livres') }}" class="nav-link">Rechercher un livre</a></li>
+      {% if not app.user %}
+      <li class="nav-item"><a href="{{ path('security_login') }}" class="nav-link">Connexion</a></li>
+      {% else %}
       <li class="nav-item {% if route == 'commandes' %} active {% endif %}"><a href="{{ path('commandes') }}" class="nav-link">Mes Commandes</a></li>
-      <!-- <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Genres</a>
-      <div class="dropdown-menu" aria-labelledby="dropdown04">
-          {# for genre in genres #}
-          <a class="dropdown-item" href="#"></a>
-          {# endfor #}
-      </div>
-    </li> -->
       <li class="nav-item {% if route == 'livraison' %} cta cta-colored {% endif %}"><a href="{{ path('livraison_edit', {'id': livraison.id }) }}" class="nav-link"><span class="icon-shopping_cart"></span>[{{ livraison.detailLivraisons | length }}]</a></li>
+      <li class="nav-item"><a href="{{ path('security_logout') }}" class="nav-link">Déconnexion</a></li>
+      <!-- <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Jules</a>
+          <div class="dropdown-menu" aria-labelledby="dropdown04">
+              <a class="dropdown-item" href="#">Modifier Profil</a>
+              <a class="dropdown-item" href="{{ path('security_logout') }}">Déconnexion</a>
+          </div>
+        </li> -->
+        {% endif %}
 
     </ul>
   </div>

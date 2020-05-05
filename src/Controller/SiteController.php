@@ -18,6 +18,7 @@ use App\Repository\LivreRepository;
 use App\Repository\AuteurRepository;
 use App\Repository\AvisRepository;
 use App\Repository\LivraisonRepository;
+use App\Repository\AdresseRepository;
 use App\Repository\PaysRepository;
 use App\Repository\UtilisateurRepository;
 use App\Repository\DetailLivraisonRepository;
@@ -42,14 +43,15 @@ class SiteController extends AbstractController
     }
 
 
-    public function header(LivraisonRepository $livr_repo, UtilisateurRepository $util_repo, ManagerRegistry $manager)
+    public function header(LivraisonRepository $livr_repo, UtilisateurRepository $util_repo, ManagerRegistry $manager, PaysRepository $pays_repo)
     {
-        $utilisateur_courant = $util_repo->find(1);
+        $utilisateur_courant = $util_repo->find(7);
         $livraison = $livr_repo->findby(['utilisateur' => $utilisateur_courant, 'statut' => "Non Validée"]);
         if (empty($livraison)) {
             $livraison = new Livraison();
             $livraison->setUtilisateur($utilisateur_courant);
-            $livraison->setAdresse($utilisateur_courant->getAdresse());
+            $adresse = $adresse_repo->find(1);
+            $livraison->setAdresse($adresse);
             $livraison->setStatut('Non Validée');
             $manager = $manager->getManager();
             $manager->persist($livraison);
@@ -117,7 +119,7 @@ class SiteController extends AbstractController
     /**
      * @Route("/livre/{id}", name="livre")
      */
-    public function livre(Livre $livre, LivreRepository $livre_repo, ManagerRegistry $manager, LivraisonRepository $livr_repo, UtilisateurRepository $util_repo)
+    public function livre(Livre $livre, LivreRepository $livre_repo, ManagerRegistry $manager, LivraisonRepository $livr_repo, UtilisateurRepository $util_repo, PaysRepository $pays_repo, AdresseRepository $adresse_repo)
     {
         $this->computeBookRatings($livre);
         $saga = null;
@@ -132,12 +134,13 @@ class SiteController extends AbstractController
                 $this->computeBookRatings($l);
             }
         }
-        $utilisateur_courant = $util_repo->find(1);
+        $utilisateur_courant = $util_repo->find(7);
         $livraison = $livr_repo->findby(['utilisateur' => $utilisateur_courant, 'statut' => "Non Validée"]);
         if (empty($livraison)) {
             $livraison = new Livraison();
             $livraison->setUtilisateur($utilisateur_courant);
-            $livraison->setAdresse($utilisateur_courant->getAdresse());
+            $adresse = $adresse_repo->find(1);
+            $livraison->setAdresse($adresse);
             $livraison->setStatut('Non Validée');
             $manager = $manager->getManager();
             $manager->persist($livraison);
@@ -182,7 +185,7 @@ class SiteController extends AbstractController
     // }
 
     /**
-     * @Route("/livraison_edit/{id}", name="livraison_edit", methods={"GET", "POST"})
+     * @Route("/user/livraison_edit/{id}", name="livraison_edit", methods={"GET", "POST"})
      */
     public function livraison_edit(Livraison $livraison, ManagerRegistry $manager, Request $request, PaysRepository $pays_repo)
     {
@@ -218,7 +221,7 @@ class SiteController extends AbstractController
         }
 
 
-        return $this->render('site/livraison.html.twig', [
+        return $this->render('user/livraison.html.twig', [
             'livraison' => $livraison,
             'pays' => $pays
         ]);
@@ -237,7 +240,7 @@ class SiteController extends AbstractController
     }
 
     /**
-     * @Route("/acheter_livre/{id}{id_livre}", name="acheter_livre")
+     * @Route("/user/acheter_livre/{id}{id_livre}", name="acheter_livre")
      */
     public function acheter_livre(Livraison $livraison, $id_livre, LivreRepository $livre_repo,  DetailLivraisonRepository $detail_repo,  ManagerRegistry $manager)
     {
@@ -266,18 +269,18 @@ class SiteController extends AbstractController
     }
 
     /**
-     * @Route("/commandes", name="commandes")
+     * @Route("/user/commandes", name="commandes")
      */
     public function commandes(UtilisateurRepository $util_repo)
     {
         $utilisateur = $util_repo->find(1);
-        return $this->render('site/commandes.html.twig', [
+        return $this->render('user/commandes.html.twig', [
             'utilisateur' => $utilisateur
         ]);
     }
 
     /**
-     * @Route("/setQuantite/{id}{quantite}", name="setQuantite")
+     * @Route("/user/setQuantite/{id}{quantite}", name="setQuantite")
      */
     public function setQuantite(DetailLivraison $detail, $quantite, ManagerRegistry $manager)
     {

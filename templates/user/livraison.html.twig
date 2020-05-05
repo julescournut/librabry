@@ -68,26 +68,25 @@
             <div class="cart-total mb-3">
                 {% if livraison.statut == "Non Validée" %}
                 <h3>Adresse de livraison</h3>
-                <p>Modifiez votre adresse de livraison si différentes de votre adresse.</p>
                 <form method="POST" class="bg-light p-5" id="adresse_form">
                   <div class="form-group">
                     <label for="country">Adresse</label>
-                    <input type="text" class="form-control text-left px-3" name="rue" value="{{ livraison.utilisateur.adresse.rue }}">
+                    <input type="text" class="form-control text-left px-3" name="rue">
                   </div>
                   <div class="form-group">
                     <label for="country">Code Postal</label>
-                    <input type="text" class="form-control text-left px-3" name="code_postal" value="{{ livraison.utilisateur.adresse.codePostal }}">
+                    <input type="text" class="form-control text-left px-3" name="code_postal">
                   </div>
                   <div class="form-group">
                     <label for="country">Ville</label>
-                    <input type="text" class="form-control text-left px-3" name="ville" value="{{ livraison.utilisateur.adresse.ville }}">
+                    <input type="text" class="form-control text-left px-3" name="ville">
                   </div>
                   <div class="form-group">
                     <label for="pays">Pays</label>
                     <div class="select-wrap">
                         <select class="form-control" name="id_pays" id="pays">
                             {% for p in pays %}
-                              <option {% if livraison.utilisateur.adresse.pays.id == p.id %} selected {%endif%} value="{{ p.id }}">{{ p.nom }}</option>
+                              <option {% if p.id == 75 %} selected {% endif %} value="{{ p.id }}">{{ p.nom }}</option>
                             {% endfor %}
                         </select>
                     </div>
