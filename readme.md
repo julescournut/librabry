@@ -9,7 +9,7 @@ Requirements
 ------------
 
   * PHP 7.2.19 or higher;
-  * [Symfony][2];
+  * [Symfony][2] 5.0.*;
   * The [usual Symfony application requirements][3].
 
 Usage
